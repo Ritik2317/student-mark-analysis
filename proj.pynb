@@ -1,0 +1,83 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = pd.read_excel("Marks.xlsx")
+
+df['total_marks'] = df[['MathScore', 'Physics_Scores', 'Chemistry_Score']].sum(axis=1)
+
+# Find the academically strongest student
+strongest_student = df.loc[df['total_marks'].idxmax()]
+
+print("\nAcademically Strongest Student:")
+print(f"Name: {strongest_student['Student_name']}")
+print(f"Total Marks: {strongest_student['total_marks']}")
+
+# Display additional information (if needed)
+print("\nDetails of the Strongest Student:")
+print(strongest_student)
+
+print("\n-------------------------\n")
+
+# Find the academically weakest student
+weakest_student = df.loc[df['total_marks'].idxmin()]
+
+print("\nAcademically Weakest Student:")
+print(f"Name: {weakest_student['Student_name']}")
+print(f"Total Marks: {weakest_student['total_marks']}")
+
+# Display additional details (if needed)
+print("\nDetails of the Weakest Student:")
+print(weakest_student)
+
+print("\n-------------------------\n")
+
+subjects = ['MathScore', 'Physics_Scores', 'Chemistry_Score']
+for subject in subjects:
+    highest_mark = df[subject].max()
+    lowest_mark = df[subject].min()
+    highest_scorers = df.loc[df[subject] == highest_mark, 'Student_name'].tolist()
+    lowest_scorers = df.loc[df[subject] == lowest_mark, 'Student_name'].tolist()
+
+    print(f"\n{subject.replace('_', ' ').title()}:")
+    print(f"  Highest Mark: {highest_mark} - Scored by: {', '.join(highest_scorers)}")
+    print(f"  Lowest Mark: {lowest_mark} - Scored by: {', '.join(lowest_scorers)}")
+
+print("\n-------------------------\n")
+
+subject_sums = {
+    'Maths': df['MathScore'].sum(),
+    'Physics': df['Physics_Scores'].sum(),
+    'Chemistry': df['Chemistry_Score'].sum()
+}
+
+# Display the contributions
+print("\nSum of Marks by Subject:")
+for subject, total in subject_sums.items():
+    print(f"{subject}: {total}")
+
+# Generate a pie chart
+plt.figure(figsize=(8, 8))
+plt.pie(
+    subject_sums.values(),
+    labels=subject_sums.keys(),
+    autopct='%1.1f%%',
+    startangle=140,
+    colors=['#ff9999', '#66b3ff', '#99ff99']
+)
+plt.title('Contribution of Subjects to Total Marks')
+plt.show()
+
+print("\n-------------------------\n")
+
+# Scatter plot for relation between total marks and study hours
+plt.figure(figsize=(10, 6))
+sns.scatterplot(data=df, x='WklyStudyHours', y='total_marks', s=100, color='blue', edgecolor='black')
+
+# Add plot details
+plt.title('Relation Between Study Hours and Total Marks', fontsize=16)
+plt.xlabel('Study Hours', fontsize=14)
+plt.ylabel('Total Marks', fontsize=14)
+plt.grid(True)
+plt.show()
